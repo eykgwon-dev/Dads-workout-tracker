@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#176b67">
+<title>아빠의 건강 운동 기록</title>
+<style>
+:root{--teal:#176b67;--mint:#e8f4f1;--ink:#183331;--muted:#667976;--line:#dce8e5;--bg:#f4f8f7;--white:#fff;--orange:#e59b48}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif;font-size:16px;line-height:1.5}
+header{background:var(--teal);color:white;padding:22px 18px 18px}header h1{font-size:23px;margin:0 0 4px}header p{margin:0;font-size:14px;opacity:.9}
+nav{display:flex;gap:6px;padding:9px;background:white;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #1232}
+nav button{flex:1;border:0;background:#edf3f2;color:#34514e;padding:12px 4px;border-radius:12px;font-weight:750;font-size:13px}
+nav button.active{background:var(--teal);color:white}
+main{max-width:760px;margin:auto;padding:16px 14px 40px}.page{display:none}.page.active{display:block}
+h2{font-size:21px;margin:8px 0 4px}h3{font-size:17px;margin:0 0 7px}.sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.card{background:white;border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #153c3510}
+.card p{margin:5px 0}.en{font-size:13px;color:var(--muted);font-weight:500}.tag{display:inline-block;background:var(--mint);color:var(--teal);font-size:12px;padding:4px 9px;border-radius:99px;font-weight:700;margin-bottom:7px}
+.notice{background:#fff5e8;border:1px solid #f1d6ad;border-radius:14px;padding:13px;font-size:14px;margin:12px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.row.wrap{flex-wrap:wrap}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input,select,textarea{width:100%;border:1px solid #cbdad6;border-radius:12px;padding:12px;font:inherit;background:white;color:var(--ink)}
+input[type=number]{max-width:100px}input[type=checkbox]{width:25px;height:25px;accent-color:var(--teal)}
+button.primary{background:var(--teal);color:white;border:0;border-radius:13px;padding:14px 18px;font-size:16px;font-weight:800;width:100%;margin-top:12px}
+button.secondary{border:1px solid var(--line);background:white;color:var(--teal);border-radius:11px;padding:10px 13px;font-weight:700}
+button:active{transform:scale(.99)}
+.datebar{display:flex;align-items:center;gap:10px}.datebar input{flex:1}
+.checkrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #edf2f0}.checkrow:last-child{border:0}
+.checkrow .txt{flex:1}.checkrow strong{display:block;font-size:15px}.checkrow small{display:block;color:var(--muted);font-size:12px}
+.metricgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{background:var(--mint);padding:14px;border-radius:14px}.metric b{font-size:25px;display:block;color:var(--teal)}.metric span{font-size:12px;color:var(--muted)}
+.painrow{display:grid;grid-template-columns:1fr 105px;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #edf2f0}.painrow:last-child{border:0}.painrow input{padding:9px}
+.chart{width:100%;height:210px;display:block}.legend{font-size:12px;color:var(--muted)}
+.barline{height:12px;background:#eaf0ee;border-radius:99px;overflow:hidden}.barline i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.small{font-size:12px;color:var(--muted)}.pill{padding:5px 9px;border-radius:20px;background:#eef4f2;font-size:12px}
+.sectiontitle{margin-top:20px}.exercise{border-left:4px solid var(--teal);padding-left:12px;margin:14px 0}
+.exercise p{font-size:14px}
+.exercise{position:relative;min-height:94px;padding-right:116px}
+.exercise-visual{position:absolute;right:0;top:2px;width:104px;height:76px;border-radius:12px;background:linear-gradient(145deg,#e3f5f3,#c8e9e7);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.exercise-visual svg{width:100%;height:100%}
+.exercise-visual .water{fill:none;stroke:#62b9c2;stroke-width:2;stroke-linecap:round}
+.exercise-visual .body{fill:none;stroke:#245b58;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.exercise-visual .head{fill:#e6b58c;stroke:#245b58;stroke-width:2}
+.exercise-visual .arrow{fill:none;stroke:#e49a35;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:380px){.exercise{padding-right:96px}.exercise-visual{width:86px;height:68px}}
+
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(min-width:600px){main{padding:22px}.metricgrid{grid-template-columns:repeat(4,1fr)}nav button{font-size:15px}}
+</style><link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</head>
+<body>
+<header><h1>아빠의 건강 운동 기록</h1><p>매일 조금씩 · 무리하지 않고 · 꾸준하게</p></header>
+<nav>
+<button class="active" data-page="guide">운동 안내</button>
+<button data-page="plan">오늘의 기록</button>
+<button data-page="stats">운동 통계</button>
+</nav>
+<main>
+<section id="guide" class="page active">
+<h2>물리치료 운동 안내</h2><p class="sub">물리치료사가 안내한 수중 운동과 스트레칭입니다. 정확한 동작은 치료사의 시범을 우선해 주세요.</p>
+<div class="notice"><b>운동할 때 기억하세요</b><br>근육에 힘이 들어가는 느낌과 약간의 불편감은 괜찮지만, 통증이 더 심해지거나 오래 지속되면 안 됩니다. 처음에는 다음 날 근육통이 생길 수 있습니다. 통증이 평소와 다르거나 악화되면 운동을 멈추고 물리치료사에게 확인하세요.</div>
+<div class="card"><span class="tag">권장 빈도</span><h3>수중 운동 주 1–2회</h3><p>각 동작은 움직임이 피로해질 때까지 반복하되 무리하지 마세요. 물속에서 빠르게 움직이거나 더 깊은 곳으로 가면 저항이 커집니다.</p><p class="small">육상 운동도 계속하고, 쉬워지면 걷기·자전거·수영 발차기 거리를 조금씩 늘릴 수 있습니다.</p></div>
+<h3 class="sectiontitle">1. 준비 운동 · Warm-up</h3>
+<div class="card">
+<div class="exercise"><b>무릎 높이 들어 걷기</b><div class="en">High-knee walks</div><p>물속에서 무릎을 번갈아 들어 앞으로 걷습니다.</p></div>
+<div class="exercise"><b>옆으로 걷기</b><div class="en">Sideways walk</div><p>몸을 옆으로 향하고 양발을 번갈아 옮깁니다.</p></div>
+<div class="exercise"><b>무릎을 편 채 뒤로 걷기</b><div class="en">Backwards straight-legged walk</div><p>무릎을 가능한 편 상태로 유지하며 천천히 뒤로 걷습니다.</p></div><span class="pill">각 동작 X 길이 · 편안한 범위</span>
+</div>
+<h3 class="sectiontitle">2. 근력 · 지구력 · Strength / Endurance</h3>
+<div class="card">
+<div class="exercise"><b>서서 다리 뒤로 들어 올리기</b><div class="en">Standing hip lift up / Donkey kick back</div><p>몸을 곧게 세우고 한쪽 다리를 뒤로 뻗어 올렸다 내립니다. 양쪽 모두 실시합니다.</p></div>
+<div class="exercise"><b>서서 다리 옆으로 벌렸다 모으기</b><div class="en">Standing hip side lift out and in</div><p>골반이 기울지 않게 한쪽 다리를 옆으로 벌렸다가 천천히 모읍니다. 양쪽 모두 실시합니다.</p></div>
+<div class="exercise"><b>킥판 수직 밀고 당기기</b><div class="en">Standing flutterboard vertical push / pull with stable core</div><p>몸통을 안정적으로 유지하며 킥판을 물속에서 위아래로 밀고 당깁니다.</p></div>
+<div class="exercise"><b>자전거 다리 움직임</b><div class="en">Supported bicycle</div><p>지지대를 잡고 자전거 페달을 밟듯 다리를 번갈아 움직입니다.</p></div>
+<div class="exercise"><b>무릎 편 작은 발차기</b><div class="en">Supported straight-knee little kicks</div><p>지지대를 잡고 무릎을 편 상태에서 작게 발차기합니다.</p></div>
+<div class="exercise"><b>무릎 굽혔다 펴기 발차기</b><div class="en">Supported little knee kicks – bending / straightening at knee</div><p>지지대를 잡고 무릎을 굽혔다 펴는 작은 발차기를 합니다.</p></div>
+<div class="exercise"><b>양팔 물속에서 벌렸다 모으기</b><div class="en">Standing arm open out and back in against water</div><p>몸통을 안정적으로 유지하고 양팔을 물의 저항에 맞서 벌렸다가 모읍니다.</p></div>
+<div class="exercise"><b>한 팔 물속으로 벌리고 뒤돌아보기</b><div class="en">Standing one arm open out through water and look behind</div><p>한 팔을 물속에서 옆·뒤쪽으로 열면서 시선을 따라 돌립니다. 양쪽을 실시합니다.</p></div>
+<div class="exercise"><b>무릎과 엉덩이를 굽혀 부력으로 좌우 회전</b><div class="en">Knees and hips flexed floating with support – rotate side to side</div><p>지지대를 이용해 무릎과 엉덩이를 굽힌 채 떠서 좌우로 회전합니다. 속도를 높이면 난도가 올라갑니다.</p></div>
+</div>
+<h3 class="sectiontitle">3. 스트레칭 · Stretches</h3>
+<div class="card"><p class="small">따뜻한 물에서 해도 좋습니다. 허리 회전을 제외하고 각 동작을 20–30초 유지합니다.</p>
+<div class="exercise"><b>허리 좌우 회전</b><div class="en">Lumbar rotations</div><p>통증 없는 범위에서 몸통을 좌우로 부드럽게 돌립니다.</p></div>
+<div class="exercise"><b>고관절 굴곡근 및 복부 스트레칭</b><div class="en">Hip flexor and abdominals</div></div>
+<div class="exercise"><b>햄스트링 스트레칭</b><div class="en">Hamstring (as tolerated)</div></div>
+<div class="exercise"><b>종아리 스트레칭</b><div class="en">Calf</div></div>
+<div class="exercise"><b>허벅지 안쪽 스트레칭</b><div class="en">Adductor</div></div></div>
+<div class="notice">※ 반복 횟수와 시간은 안내지에 숫자가 지정되지 않은 항목이 있어, 치료사가 알려준 범위를 따르세요. 이 앱은 의료진의 처방을 대신하지 않습니다.</div>
+</section>
+
+<section id="plan" class="page">
+<h2>오늘의 운동 기록</h2><p class="sub">날짜를 선택하고 완료한 운동에 체크해 주세요. 숫자는 편하게 입력할 수 있습니다.</p>
+<div class="card">
+<label for="logdate">기록 날짜</label><div class="datebar"><input type="date" id="logdate"><button class="secondary" id="todayBtn">오늘</button></div>
+</div>
+<div class="card"><div class="row"><h3>수영장 운동 계획</h3><span class="pill">Pool routine</span></div><p class="small">손글씨 계획표를 바탕으로 정리했습니다. 목표 거리·시간을 완료하면 체크하세요.</p>
+<div id="poolList"></div>
+</div>
+<div class="card"><h3>운동 후 통증 점수</h3><p class="small">각 부위의 통증을 1–10점으로 기록하세요. 1 = 통증 없음 · 10 = 매우 심한 통증</p><div id="painList"></div>
+<label for="generalPain">오늘 전체 컨디션 (1–10, 높을수록 통증 심함)</label><input type="number" id="generalPain" min="1" max="10" placeholder="예: 3">
+<label for="notes">메모 (선택)</label><textarea id="notes" rows="2" placeholder="예: 허리가 뻐근했지만 수영 후 편해짐"></textarea>
+<button class="primary" id="saveBtn">오늘 기록 저장하기</button><p id="saveMsg" class="small" aria-live="polite"></p>
+</div>
+<div class="card"><h3>오늘의 완료율</h3><div class="row"><b id="todayDone">0 / 7개 완료</b><b id="todayPct">0%</b></div><div class="barline"><i id="todayBar" style="width:0%"></i></div></div>
+</section>
+
+<section id="stats" class="page">
+<h2>운동 통계</h2><p class="sub">저장한 기록을 바탕으로 운동 습관과 통증 변화를 확인합니다.</p>
+<div class="card"><label for="period">조회 기간</label><select id="period"><option value="7">최근 7일</option><option value="30" selected>최근 30일</option><option value="90">최근 3개월</option><option value="all">전체 기록</option></select></div>
+<div class="metricgrid">
+<div class="metric"><b id="mDays">0일</b><span>기록이 있는 날짜</span></div>
+<div class="metric"><b id="mDone">0%</b><span>운동 완료율 (운동 기록일 기준)</span></div>
+<div class="metric"><b id="mStreak">0일</b><span>연속 기록</span></div>
+<div class="metric"><b id="mPain">—</b><span>평균 통증 점수</span></div>
+</div>
+<div class="card"><h3>날짜별 운동 완료율</h3><svg id="activityChart" class="chart" viewBox="0 0 600 210" role="img" aria-label="날짜별 운동 완료율 그래프"></svg><div class="legend">각 날짜에 완료한 운동 항목 비율 (%)</div></div>
+<div class="card"><h3>통증 변화</h3><svg id="painChart" class="chart" viewBox="0 0 600 210" role="img" aria-label="통증 변화 그래프"></svg><div class="legend">전체 컨디션 통증 점수 · 1은 통증 없음, 10은 심한 통증</div></div>
+<div class="card"><h3>운동별 누적 완료</h3><div id="exerciseStats"></div></div>
+<div class="card"><h3>최근 기록</h3><div id="recentLogs" class="small">아직 저장된 기록이 없습니다.</div></div>
+<div class="row wrap"><button class="secondary" id="exportBtn">기록 내보내기 (백업)</button><button class="secondary" id="importBtn">백업 불러오기</button><button class="secondary" id="clearBtn">전체 기록 삭제</button><input type="file" id="importFile" accept="application/json" hidden></div>
+<p class="small">기록은 현재 휴대폰/브라우저에 저장됩니다. 휴대폰을 바꾸거나 다른 기기에서 보려면 백업 파일을 내보내고 옮겨 불러오세요.</p>
+</section>
+</main><footer>아빠의 건강 운동 기록 · 가족과 의료진이 함께 확인하는 기록장</footer>
+<script>
+const pool=[
+{id:'walk',ko:'물속 걷기 3가지',en:'High-knee / sideways / backwards walk',goal:'각 방향 40m',desc:'무릎 높이 들기, 옆으로 걷기, 뒤로 걷기'},
+{id:'backkick',ko:'뒤로 발차며 걷기',en:'Backward kicking walk',goal:'40m',desc:'손글씨 계획표의 “뒷발 차며 뒤로 걷기”'},
+{id:'sidewalk',ko:'옆으로 넓게 벌려 걷기',en:'Wide side-step walk',goal:'40m',desc:'다리 간격을 크게 벌리며 옆으로 걷기'},
+{id:'backstroke',ko:'배영',en:'Backstroke swimming',goal:'100m',desc:'편안한 속도로 배영하기'},
+{id:'breaststroke',ko:'평영',en:'Breaststroke swimming',goal:'100m',desc:'편안한 속도로 평영하기'},
+{id:'knees',ko:'무릎 안쪽·바깥쪽 움직이기',en:'Knee movement (inward / outward)',goal:'10분',desc:'손글씨 계획표의 무릎 안쪽·바깥쪽 운동'},
+{id:'arms',ko:'양팔로 물 젓고 걷기',en:'Walking while pushing water with both arms',goal:'10분',desc:'양팔로 물을 밀고 당기며 걷기'}
+];
+const pains=[{id:'back',ko:'허리 뒤쪽',en:'Lower back (rear)'},{id:'hip',ko:'엉덩이 / 골반',en:'Hip / buttock'},{id:'thigh',ko:'허벅지',en:'Thigh'},{id:'calf',ko:'종아리',en:'Calf'},{id:'foot',ko:'발바닥',en:'Sole of foot'}];
+const KEY='dadPoolRehabLogsV1';let logs=JSON.parse(localStorage.getItem(KEY)||'{}');
+if(!localStorage.getItem(KEY)){
+  logs={
+    '2026-11-04':{done:{},pain:{back:10,hip:10,thigh:8,calf:10,foot:10},generalPain:null,notes:'손글씨 통증 기록표에서 옮김'},
+    '2026-11-05':{done:{},pain:{back:10,hip:10,thigh:8,calf:10,foot:10},generalPain:null,notes:'손글씨 통증 기록표에서 옮김'},
+    '2026-11-06':{done:{},pain:{back:9,hip:9,thigh:7,calf:10,foot:10},generalPain:null,notes:'손글씨 통증 기록표에서 옮김'}
+  };
+  localStorage.setItem(KEY,JSON.stringify(logs));
+}
+let currentDate=new Date().toLocaleDateString('en-CA');
+const $=id=>document.getElementById(id);
+$('logdate').value=currentDate;
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderInputs(){const log=logs[$('logdate').value]||{done:{},pain:{}};$('poolList').innerHTML=pool.map((p,i)=>`<div class="checkrow"><input type="checkbox" id="done_${p.id}" ${log.done?.[p.id]?'checked':''}><div class="txt"><strong>${p.ko}</strong><small>${p.en} · 목표 ${p.goal}</small><small>${p.desc}</small></div><span class="pill">${p.goal}</span></div>`).join('');
+$('painList').innerHTML=pains.map(p=>`<div class="painrow"><div><b>${p.ko}</b><div class="small">${p.en}</div></div><input type="number" id="pain_${p.id}" min="1" max="10" placeholder="0–10" value="${log.pain?.[p.id]??''}"></div>`).join('');
+$('generalPain').value=log.generalPain??'';$('notes').value=log.notes??'';updateToday();}
+function collect(){let done={};pool.forEach(p=>done[p.id]=$('done_'+p.id).checked);let pain={};pains.forEach(p=>{let v=$('pain_'+p.id).value;if(v!=='')pain[p.id]=Math.max(1,Math.min(10,+v));});let gp=$('generalPain').value;return {done,pain,generalPain:gp===''?null:Math.max(1,Math.min(10,+gp)),notes:$('notes').value,updated:new Date().toISOString()};}
+function save(silent=false){let d=$('logdate').value;if(!d)return;logs[d]=collect();localStorage.setItem(KEY,JSON.stringify(logs));if(!silent){$('saveMsg').textContent='저장되었습니다. 이 기기에 안전하게 보관됩니다.';setTimeout(()=>$('saveMsg').textContent='',3500);}updateToday();renderStats();}
+function updateToday(){let n=pool.filter(p=>$('done_'+p.id)?.checked).length,pct=Math.round(n/pool.length*100);$('todayDone').textContent=`${n} / ${pool.length}개 완료`;$('todayPct').textContent=pct+'%';$('todayBar').style.width=pct+'%';}
+function changeDate(){renderInputs();}
+$('logdate').addEventListener('change',changeDate);$('todayBtn').onclick=()=>{$('logdate').value=new Date().toLocaleDateString('en-CA');renderInputs();};
+$('saveBtn').onclick=()=>save();$('poolList').addEventListener('change',updateToday);
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===b.dataset.page));if(b.dataset.page==='stats')renderStats();});
+$('period').onchange=renderStats;
+function datesInRange(){let ds=Object.keys(logs).sort();let v=$('period').value;if(v!=='all'){let cut=new Date();cut.setDate(cut.getDate()-(+v-1));let s=cut.toLocaleDateString('en-CA');ds=ds.filter(d=>d>=s);}return ds;}
+function chart(el,vals,max=100){let w=600,h=210,l=38,r=12,t=12,b=28,iw=w-l-r,ih=h-t-b;let ticks=[0,max/2,max];let s=`<line x1="${l}" y1="${t+ih}" x2="${w-r}" y2="${t+ih}" stroke="#b8cbc6"/>`;ticks.forEach(v=>{let y=t+ih-v/max*ih;s+=`<line x1="${l}" y1="${y}" x2="${w-r}" y2="${y}" stroke="#e5eeeb"/><text x="${l-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#71837f">${v}</text>`;});if(vals.length){let pts=vals.map((o,i)=>[l+(vals.length===1?iw/2:i*iw/(vals.length-1)),t+ih-o.v/max*ih]);s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#176b67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;pts.forEach((p,i)=>s+=`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#176b67"><title>${vals[i].d}: ${vals[i].v}</title></circle>`);[0,Math.floor((vals.length-1)/2),vals.length-1].filter((v,i,a)=>a.indexOf(v)===i).forEach(i=>s+=`<text x="${pts[i][0]}" y="${h-6}" text-anchor="middle" font-size="11" fill="#71837f">${vals[i].d.slice(5)}</text>`);}else{s+=`<text x="300" y="105" text-anchor="middle" fill="#71837f" font-size="14">기록이 쌓이면 그래프가 표시됩니다.</text>`;}$(el).innerHTML=s;}
+function renderStats(){if(!$('activityChart'))return;let ds=datesInRange(),values=ds.map(d=>({d,v:Math.round(pool.filter(p=>logs[d].done?.[p.id]).length/pool.length*100)}));let doneCount=ds.reduce((a,d)=>a+pool.filter(p=>logs[d].done?.[p.id]).length,0),possible=ds.length*pool.length;let painscore=ds.map(d=>logs[d].generalPain).filter(v=>v!==null&&v!==undefined);$('mDays').textContent=ds.filter(d=>Object.keys(logs[d].pain||{}).length||logs[d].generalPain!==null||pool.some(p=>logs[d].done?.[p.id])).length+'일';
+let exerciseDays=ds.filter(d=>pool.some(p=>logs[d].done?.[p.id]));
+let exerciseDone=exerciseDays.reduce((a,d)=>a+pool.filter(p=>logs[d].done?.[p.id]).length,0);
+$('mDone').textContent=(exerciseDays.length?Math.round(exerciseDone/(exerciseDays.length*pool.length)*100):0)+'%';$('mPain').textContent=painscore.length?(painscore.reduce((a,b)=>a+b,0)/painscore.length).toFixed(1)+'/10':'—';
+let streak=0,cur=new Date();for(;;){let d=cur.toLocaleDateString('en-CA');if(logs[d]){streak++;cur.setDate(cur.getDate()-1);}else break;}$('mStreak').textContent=streak+'일';
+chart('activityChart',values);chart('painChart',ds.filter(d=>logs[d].generalPain!==null&&logs[d].generalPain!==undefined).map(d=>({d,v:logs[d].generalPain})),10);
+$('exerciseStats').innerHTML=pool.map(p=>{let n=ds.filter(d=>logs[d].done?.[p.id]).length;return `<div style="margin:12px 0"><div class="row"><b>${p.ko}</b><span class="small">${n}회</span></div><div class="barline"><i style="width:${ds.length?100*n/ds.length:0}%"></i></div><div class="small">${p.en}</div></div>`}).join('');
+$('recentLogs').innerHTML=ds.slice(-7).reverse().map(d=>{let n=pool.filter(p=>logs[d].done?.[p.id]).length;return `<div class="row" style="padding:7px 0;border-bottom:1px solid #edf2f0"><span>${d}</span><b>${n}/${pool.length}개 · 통증 ${logs[d].generalPain??'미기록'}/10</b></div>`}).join('')||'아직 저장된 기록이 없습니다.';}
+$('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(logs,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='아빠_운동기록_백업.json';a.click();URL.revokeObjectURL(a.href);};
+$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!x||typeof x!=='object')throw 0;logs={...logs,...x};localStorage.setItem(KEY,JSON.stringify(logs));
+
+
+renderInputs();renderStats();alert('백업 기록을 불러왔습니다.');}catch{alert('백업 파일을 읽을 수 없습니다.');}e.target.value='';};
+$('clearBtn').onclick=()=>{if(confirm('저장된 모든 운동 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다.')){logs={};localStorage.removeItem(KEY);renderInputs();renderStats();}};
+function exercisePicture(i){
+ const poses=[
+  ['M25 55 L40 43 L53 55 L66 43','M40 43 L40 25 M40 25 L33 17','M53 55 L57 70 M25 55 L18 69','M70 30 Q82 18 88 29'],
+  ['M25 55 L40 43 L55 55 L68 43','M40 43 L40 25 M40 25 L31 17','M55 55 L67 65 M25 55 L15 65','M72 31 Q84 18 90 29'],
+  ['M28 56 L43 44 L58 56','M43 44 L43 25 M43 25 L30 22 L20 30','M58 56 L74 51 M28 56 L18 66','M75 35 Q88 28 91 39'],
+  ['M26 55 L43 44 L59 55','M43 44 L43 25 M43 25 L27 34 M43 25 L60 34','M59 55 L67 69 M26 55 L18 69','M68 24 Q82 16 90 25'],
+  ['M28 56 L43 44 L57 55','M43 44 L43 25 M43 25 L30 20','M57 55 L70 49 L80 60 M28 56 L20 69','M73 32 Q86 24 91 35'],
+  ['M27 56 L43 44 L58 55','M43 44 L43 25 M43 25 L31 18','M58 55 L77 55 L84 48 M27 56 L19 68','M73 33 Q86 25 91 35'],
+  ['M27 56 L43 44 L58 55','M43 44 L43 25 M43 25 L31 18','M58 55 L70 65 L82 65 M27 56 L19 68','M74 34 Q87 26 91 36'],
+  ['M27 56 L43 44 L58 55','M43 44 L43 25 M43 25 L22 25 M43 25 L64 25','M58 55 L66 69 M27 56 L19 68','M68 23 Q82 14 90 23'],
+  ['M27 56 L43 44 L58 55','M43 44 L43 25 M43 25 L20 29 M43 25 L66 18','M58 55 L67 69 M27 56 L19 68','M69 20 Q83 11 91 20'],
+  ['M25 57 Q43 48 61 57','M43 49 L43 28 M43 28 L30 18 M43 28 L57 18','M43 49 L30 65 M43 49 L59 65','M70 30 Q83 18 91 29'],
+  ['M23 57 L43 48 L63 57','M43 48 L43 29 M43 29 L28 21 M43 29 L60 21','M43 48 L28 67 M43 48 L65 62','M72 30 Q84 18 91 29'],
+  ['M22 58 Q42 48 62 58','M42 48 L42 28 M42 28 L28 20 M42 28 L58 20','M42 48 L28 66 M42 48 L66 65','M72 30 Q84 18 91 29'],
+  ['M24 58 L43 47 L62 58','M43 47 L43 28 M43 28 L25 28 M43 28 L61 28','M62 58 L72 68 M24 58 L16 68','M70 29 Q84 16 92 27'],
+  ['M24 58 L43 47 L62 58','M43 47 L43 28 M43 28 L25 20 M43 28 L63 20','M62 58 L72 68 M24 58 L16 68','M70 29 Q84 16 92 27']
+ ];
+ const a=poses[i%poses.length];
+ return `<div class="exercise-visual" role="img" aria-label="운동 동작 그림"><svg viewBox="0 0 110 82" xmlns="http://www.w3.org/2000/svg"><path class="water" d="M4 65q7-5 14 0t14 0t14 0t14 0t14 0t14 0t14 0"/><circle class="head" cx="43" cy="17" r="7"/><path class="body" d="${a[0]} ${a[1]} ${a[2]}"/><path class="arrow" d="${a[3]} M84 24 l7 5 -8 3"/></svg></div>`;
+}
+document.querySelectorAll('#guide .exercise').forEach((el,i)=>{el.insertAdjacentHTML('afterbegin',exercisePicture(i));});
+renderInputs();renderStats();
+</script></body></html>
